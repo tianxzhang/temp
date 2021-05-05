@@ -1,0 +1,89 @@
+﻿var role="";
+var userId;
+$('#header_div').load(basePath+'public/header.html');
+
+$(function(){
+	//本地cookie中获取用户信息
+	var cookies=document.cookie;
+	var cookieArr=cookies.split(";");
+	var dataStr="";
+	for(i=0;i<cookieArr.length;i++){
+		var arr=cookieArr[i].split("=");
+		if("tarena_dajiangsai_user"==arr[0].replace(/(^\s+)|(\s+$)/g,"")){ 
+			dataStr= cookieArr[i].split("tarena_dajiangsai_user=")[1];
+			break; 
+		}
+	}
+	dataStr=dataStr.replace("\"","").replace("\"","");
+	var strArray = decode64(dataStr.toString());
+	role = strArray.split(":")[2];
+	var userName = decodeURI(strArray.split(":")[0]);
+	var showUserName = "";
+	var validateEmail = strArray.split(":")[3];
+	userId=strArray.split(":")[1];
+	if(userName!=null){
+		var len = userName.length;
+		if( len <= 8){
+			showUserName = userName;
+		}else{
+			showUserName = userName.substring(0,8)+"...";
+		}
+	}
+	//登录名字
+	$("#login_user_name").text(showUserName);
+	//动态创建导航栏
+	$.ajax({
+		//async: false,
+		url : basePath+"public/getHeader.jsp",
+		type : "post", 
+		success : function(data) {
+			if(data == null || data == "" || data == undefined || data == -1){
+				$("#login_before").css("display","block");
+				$("#login_after").css("display","none");
+			}else{
+				$("#login_before").css("display","none");
+				$("#login_after").css("display","block");
+				$('.login').hover(function(){
+					$('.login .icon_top').show();
+					$('.login ul').show();
+				},function(){
+					$('.login .icon_top').hide();
+					$('.login ul').hide();
+				});
+				var headerHtml = "";
+				if(data == 1){   //管理员
+					headerHtml += "<li><a href="+basePath+"organizer/admin/index.html>后台管理中心</a>"
+				}else if(data == 2){ // 初赛评委
+					headerHtml += "<li><a href="+basePath+"preliminary/list>评分中心</a>";
+				}else if(data == 3){ // 决赛评委
+					headerHtml += "<li><a href="+basePath+"final/list>评分中心</a></li>";
+				}else if(data == 4){ //院校老师 <li><a href="+basePath+"receipt/toReceipt>回执单</a></li>
+					headerHtml += "<li><a href="+basePath+"school/enrollment>本校报名情况</a></li><li><a href="+basePath+"school/loadTeacherInfo>个人信息</a></li>";
+				}else if(data == 6){ // 组长
+					headerHtml += "<li><a href="+basePath+"final/viewAllScore>查看决赛排名</a></li>";
+				}else {		//参赛选手
+					headerHtml += "<li><a href="+basePath+"personal/loadPersonInfo>个人中心</a></li></li>";
+				}
+				headerHtml += "<li class=\"logout\"><a href=\"javascript:;\" onclick=\"logout();\"><i>&nbsp;</i>退出</a></li>";
+				$("#login_after_menu").html(headerHtml);
+			}
+		}
+	});
+});
+
+
+function logout(){
+	$.ajax({
+		url:basePath+"lag/logout",
+		type:"get",
+		success:function(data){
+			if(data){
+				window.location.href = basePath+"index.html";
+			}else{
+				window.location.href = window.location.href;
+			}
+		},error:function(xhr){
+			console.log("发生异常");
+		}
+	});
+}

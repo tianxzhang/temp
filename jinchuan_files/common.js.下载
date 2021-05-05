@@ -1,0 +1,131 @@
+// JavaScript Document
+//IE兼容placeholder属性（关联jquery.placeholder.min.js插件）
+$(function() {
+	$('input, textarea').placeholder();
+});
+
+//去左空格;
+function ltrim(s){
+	return s.replace(/(^s*)/g, "");
+}
+//去右空格;
+function rtrim(s){
+	return s.replace(/(s*$)/g, "");
+}
+//去左右空格;
+function trim(s){
+	return rtrim(ltrim(s));
+}
+
+//返回顶部
+function backToTop(){
+	$("html,body").animate({ scrollTop: 0 },300,function(){
+	});
+}
+
+//input被触发的时候边框变色
+$(function(){
+	$('input[type=text],input[type=password]').focus(function(){
+		$(this).css('border-color','#35a9e3');
+	}).blur(function(){
+		$(this).css('border-color','#dcdcdc');
+	});
+});
+
+//弹层
+function popbox(obj){
+	if($(document).height() > $(window).height()){
+		heightnum = $(document).height();
+	}else{
+		heightnum = $(window).height();
+	}
+	$('.gray_layer').css('height',heightnum);
+	$('.gray_layer').show();
+	
+	var marginLeft = $(obj).outerWidth()/-2;
+	var marginTop = $(obj).outerHeight()/-2;
+	$(obj).css('margin-left',marginLeft);
+	$(obj).css('margin-top',marginTop);
+	$(obj).fadeIn();
+	
+	return false;
+}
+
+function popclose(obj,obj2){
+	$('.gray_layer').hide();
+	$(obj).hide();
+	if(obj2){
+		popbox(obj2);
+	}
+}
+
+//登录之后js
+$(function(){
+	$('.login').hover(function(){
+		$('.login .icon_top').show();
+		$('.login ul').show();
+	},function(){
+		$('.login .icon_top').hide();
+		$('.login ul').hide();
+	});
+});
+
+
+//备注里，textarea点击之后，span-提示文字消失；光标离开textarea之后，再进行判断
+$(function(){
+	$('.remark .textarea').focus(function(){
+		$('.remark span').hide();
+	}).blur(function(){
+		if($(this).val() == ""){
+			$('.remark span').show();
+		}else{
+			$('.remark span').hide();
+		}
+	});
+	$('.remark span').click(function(){
+		$('.remark .textarea').focus();
+		$(this).hide();
+	});
+});
+
+/**
+ * 链接邮箱登陆首页
+ * @param email
+ */
+function toEamilAddress(email) {
+	// 截取邮箱地址@后面的部分,根据截取的部分判断是什么邮箱，然后跳转到响应的邮箱登录的官方主页
+	var address = email.substring(email.lastIndexOf("@") + 1).toLowerCase();
+	if (address.indexOf("sina") == 0) {
+		window.location.href = "http://mail.sina.com.cn/";
+	} else if (address.indexOf("qq") == 0) {
+		window.location.href = "https://mail.qq.com/";
+	} else if (address.indexOf("163") == 0) {
+		window.location.href = "http://mail.163.com/";
+	} else if (address.indexOf("126") == 0) {
+		window.location.href = "http://mail.126.com/";
+	} else if (address.indexOf("yehoo") == 0) {
+		window.location.href = "https://login.yahoo.com/";
+	} else if (address.indexOf("gmail") == 0) {
+		window.location.href = "http://gmail.google.com/";
+	} else if (address.indexOf("sohu") == 0) {
+		window.location.href = "http://mail.sohu.com/";
+	} else if (address.indexOf("tom") == 0) {
+		window.location.href = "http://mail.tom.com/";
+	} else if (address.indexOf("21cn") == 0) {
+		window.location.href = "http://mail.21cn.com/";
+	} else if (address.indexOf("139") == 0) {
+		window.location.href = "http://mail.10086.cn/";
+	} else if (address.indexOf("263") == 0) {
+		window.location.href = "http://mail.263.net/";
+	} else if (address.indexOf("sogou") == 0) {
+		window.location.href = "http://mail.sogou.com/";
+	} else if (address.indexOf("yeah") == 0) {
+		window.location.href = "http://www.yeah.net/";
+	} else if (address.indexOf("hotmail") == 0) {
+		window.location.href = "http://www.hotmail.com";
+	} else if (address.indexOf("188") == 0) {
+		window.location.href = "http://ipad.188.com/";
+	}else if (address.indexOf("139") == 0) {
+		window.location.href = "http://mail.10086.cn/";
+	}
+}

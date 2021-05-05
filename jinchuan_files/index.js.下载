@@ -1,0 +1,107 @@
+// JavaScript Document
+$(function(){
+	//焦点图
+	var big_img = $('.focus .big_img');
+	var small_img = $('.focus .small_img');
+	var slider_count = $('#big_focus li').length-1;
+
+	var slider_i = 0;
+	var move = true;
+	var delayTime = 5000;
+	/*定义动画*/
+	function slider(){
+		if(move){
+			//slider_i ++;
+			if(slider_i < slider_count){
+				slider_i ++;
+			}else{
+				slider_i = 0;
+			}
+			/*ul宽度的定义，大图部分li的切换*/
+			$(big_img).css('width',796*(slider_count+1));
+			$(big_img).stop();
+			$(big_img).animate({left:-796 * slider_i + 'px'});
+			/*小图部分li的切换*/
+			$(small_img).children('li').removeClass('current');
+			$(small_img).children('li').eq(slider_i).addClass('current');
+		}
+	}
+	/*鼠标放在小图上做大图切换*/
+	$(small_img).children('li').mouseover(function(){
+		if(slider != $(this).index() - 1){
+			move = true;
+			slider_i = $(this).index() - 1;
+			slider();
+			move=false;
+		}
+	});
+	var timer = setInterval(slider,delayTime);
+	/*鼠标放上暂停移动，离开继续*/
+	$('.focus').mouseover(function(){
+		move = false;
+	});
+	$('.focus').mouseout(function(){
+		move = true;
+	});
+
+	//tab切换
+	$('.tab_count_material span').click(function(){
+		var _index = $(this).index();
+		$(this).addClass('current').siblings('span').removeClass('current');
+		$(this).parent().siblings().children().eq(_index).show().siblings('div').hide();
+	});
+	
+	//通知飘窗
+	$('.noitce .close').click(function(){
+		$('.noitce .cont').fadeOut();
+		$('.noitce .default').fadeIn();
+	});
+	$('.noitce .default').click(function(){
+		$('.noitce .default').fadeOut();
+		$('.noitce .cont').fadeIn();
+	});
+	var url = window.location.href;
+	if(url.split("#").length == 2 && url.split("#")[1] == "email=="){
+		alert("您还未填写邮箱信息，请先完善信息!");
+	}
+	$.ajax({
+		url:basePath+"index/getNumberOfSchoolByArea",
+		type:"post",
+		success:function(data){
+			if(data == null || data == undefined || data == "" || data.length <= 0){
+				$("#school_empty").css("display","block");
+				$("#school_ul1").css("display","none");
+				$("#school_ul2").css("display","none");
+			}else{
+				var schoolArray = eval(data); //将json字符串转成成数组
+				var schoolUl1 = "";
+				var schoolUl2 = "";
+				for(var i = 0;i<schoolArray.length;i++){
+					if(i<=5){
+						schoolUl1 += ("<li><a href='javascript:;'><span>"+schoolArray[i].strSchool+"</span><b>"+schoolArray[i].num+"</b></a></li>");
+					}else{
+						schoolUl2 += ("<li><a href='javascript:;'><span>"+schoolArray[i].strSchool+"</span><b>"+schoolArray[i].num+"</b></a></li>");
+					}
+				}
+				if(schoolArray<5){
+					$("#school_ul2").css("display","none");
+				}
+				$("#school_ul1").html(schoolUl1);
+				$("#school_ul2").html(schoolUl2);
+			}
+		},error:function(xhr){
+			console.log("获取前12名学校信息失败....");
+		}
+	})
+});
+
+function noticeDetail(href){
+	window.location.href = href;
+	$.ajax({
+		url:basePath+"infoGroup/updateNotice",
+		type:"post",
+		success:function(data){
+			console.log(data);
+		}
+	});
+}

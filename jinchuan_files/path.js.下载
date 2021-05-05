@@ -1,0 +1,5 @@
+var basePath = "https://www.dajiangsai.org/";
+var web_href = window.location.href;
+if(web_href.indexOf("https://www.dajiangsai.org/") == -1){
+	basePath = "https://www.dajiangsai.org/";
+}
